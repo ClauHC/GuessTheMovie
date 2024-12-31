@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.Scanner;
 
 public class HernandezClaudiaMain {
@@ -22,6 +23,7 @@ public class HernandezClaudiaMain {
             switch (menuOption){
                 case 1:
                     System.out.println("guessingLetter");
+                    readTitlesFile ();
                     //guessingLetter();
                     break;
                 case 2:
@@ -58,5 +60,27 @@ public class HernandezClaudiaMain {
         }while(!validInput);
         return value;
     }
+
+    public void readTitlesFile (){
+        File file= new File("titulos.txt");
+        Scanner input= null;
+
+        int count = 0;
+        String title;
+        try {
+            input = new Scanner(file);
+            while (input.hasNextLine()){
+                title = input.nextLine();
+                System.out.println("Peli " + count + ": " +title);
+                count ++;
+            }
+        } catch (Exception e) {
+            System.out.println("Ha ocurrido una exepcion: " + e);
+        }finally{
+            if (input!=null){input.close();}
+        }
+    }
+
+
 
 }
