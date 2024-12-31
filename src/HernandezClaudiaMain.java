@@ -5,6 +5,10 @@ import java.util.Scanner;
 
 public class HernandezClaudiaMain {
 
+    private static final int MAX_TURNS = 10; // Constante para los intentos iniciales
+    private int remainingTurns = MAX_TURNS; // Contador de intentos restantes
+    private String revealedTitle; // Título revelado progresivamente
+
     public static void main(String[] args) {
         HernandezClaudiaMain programa = new HernandezClaudiaMain();
         programa.inicio();
@@ -13,30 +17,39 @@ public class HernandezClaudiaMain {
     public void inicio(){
 
         String randomTitle = readTitlesFile();
+        revealedTitle = convertToAsterisks(randomTitle);
 
-        System.out.println(randomTitle);
-
-        String menu =
+        String menu;
+        int menuOption;
+        do {
+            menu =
                 "\n🎯🎯🎯 Guess the Movie 🎯🎯🎯 " +
                 "\n" + numCharacters(randomTitle) +
-                "\nYou are gessing: " + convertToAsterisks(randomTitle) +
-                "\nRemaining turns: " + "remainingTurns" +
+                "\nYou are gessing: " + revealedTitle +
+                "\nRemaining turns: " + remainingTurns +
                 "\nPoints: " + "points" +
                 "\nChoose an option:\n [1] Guess a letter \n [2] Guess the movies's title \n [3] Exit";
-        int menuOption = 0;
-        do{
-            menuOption = getIntFromConsole(menu, 1, 2);
+
+            menuOption = getIntFromConsole(menu, 1, 3);
             switch (menuOption){
                 case 1:
-                    System.out.println("guessingLetter");
-                    //guessingLetter();
+                    guessingLetter(randomTitle);
                     break;
                 case 2:
                     System.out.println("guessingTitle");
                     //guessingTitle();
                     break;
+                case 3:
+                    System.out.println("You have decided to leave the game. Goodbye!");
+                    break;
             }
-        }while(menuOption!=3);
+
+            if (remainingTurns == 0) {
+                System.out.println("Game over! \nYou lose!");
+                break;
+            }
+
+        } while (menuOption != 3);
 
 
     }
@@ -77,7 +90,7 @@ public class HernandezClaudiaMain {
         try {
             input = new Scanner(file);
             while (input.hasNextLine()){
-                String title = input.nextLine();
+                String title = input.nextLine().toLowerCase();
                 titles.add(title);
             }
         } catch (Exception e) {
@@ -136,7 +149,39 @@ public class HernandezClaudiaMain {
                 result += currentChar;
             }
         }
-
         return result;
     }
+
+    public void guessingLetter(String randomTitle) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("Enter a single letter or digit: ");
+        String charInput = input.next();
+        charInput = charInput.toLowerCase();
+
+        if (charInput.length() != 1 || !Character.isLetterOrDigit(charInput.charAt(0))) {
+            System.out.println("Error. You must enter a single valid letter or digit.");
+            return;
+        }
+
+        char guessedChar = charInput.charAt(0);
+        if (randomTitle.contains(String.valueOf(guessedChar))) {
+            String updatedTitle = "";
+            for (int i = 0; i < randomTitle.length(); i++) {
+                // Reemplaza el asterisco por la letra adivinada
+                if (randomTitle.charAt(i) == guessedChar) {
+                    updatedTitle += guessedChar;
+                }else{
+                    // Mantiene el estado actual de revealedTitle
+                    updatedTitle += revealedTitle.charAt(i);
+                }
+            }
+            revealedTitle = updatedTitle;
+            System.out.println("Correct guess! Updated title: " + revealedTitle);
+        } else {
+            System.out.println("Attempt failed.");
+            // Disminuir intentos restantes
+            remainingTurns--;
+        }
+    }
+
 }
