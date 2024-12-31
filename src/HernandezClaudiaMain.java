@@ -1,4 +1,6 @@
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class HernandezClaudiaMain {
@@ -23,7 +25,7 @@ public class HernandezClaudiaMain {
             switch (menuOption){
                 case 1:
                     System.out.println("guessingLetter");
-                    readTitlesFile ();
+                    System.out.println(readTitlesFile ());
                     //guessingLetter();
                     break;
                 case 2:
@@ -32,6 +34,8 @@ public class HernandezClaudiaMain {
                     break;
             }
         }while(menuOption!=3);
+
+
     }
 
     public int getIntFromConsole(String mensaje, int valueMin, int valueMax){
@@ -61,23 +65,29 @@ public class HernandezClaudiaMain {
         return value;
     }
 
-    public void readTitlesFile (){
+    public String readTitlesFile (){
         File file= new File("titulos.txt");
         Scanner input= null;
+        ArrayList<String> titles = new ArrayList<>();
+        Random random = new Random();
 
-        int count = 0;
-        String title;
         try {
             input = new Scanner(file);
             while (input.hasNextLine()){
-                title = input.nextLine();
-                System.out.println("Peli " + count + ": " +title);
-                count ++;
+                String title = input.nextLine();
+                titles.add(title);
             }
         } catch (Exception e) {
             System.out.println("Ha ocurrido una exepcion: " + e);
         }finally{
             if (input!=null){input.close();}
+        }
+
+        if (!titles.isEmpty()) {
+            int randomIndex = random.nextInt(titles.size());
+            return titles.get(randomIndex);
+        } else {
+            return "No se encontraron títulos en el archivo.";
         }
     }
 
