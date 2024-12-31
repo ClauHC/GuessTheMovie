@@ -12,9 +12,11 @@ public class HernandezClaudiaMain {
 
     public void inicio(){
 
+        String tituloRandom = readTitlesFile();
+
         String menu =
                 "\n🎯🎯🎯 Guess the Movie 🎯🎯🎯 " +
-                "\nThe movie title has " + "numCharacters" + " ifHasSpaces" +
+                "\n" + numCharacters(tituloRandom) +
                 "\nYou are gessing: " + "asterisks" +
                 "\nRemaining turns: " + "remainingTurns" +
                 "\nPoints: " + "points" +
@@ -25,7 +27,6 @@ public class HernandezClaudiaMain {
             switch (menuOption){
                 case 1:
                     System.out.println("guessingLetter");
-                    System.out.println(readTitlesFile ());
                     //guessingLetter();
                     break;
                 case 2:
@@ -55,10 +56,10 @@ public class HernandezClaudiaMain {
                 else if (value>=valueMin && value<=valueMax){
                     validInput = true;
                 }else{
-                    System.out.println("Error. El número debe estar entre " + valueMin + " y " + exitNumber);
+                    System.out.println("Error. The number must be between " + valueMin + " and " + exitNumber);
                 }
             }else{
-                System.out.println("Error. Tienes que introducir un número");
+                System.out.println("Error. You have to enter a number");
                 input.nextLine();
             }
         }while(!validInput);
@@ -78,7 +79,7 @@ public class HernandezClaudiaMain {
                 titles.add(title);
             }
         } catch (Exception e) {
-            System.out.println("Ha ocurrido una exepcion: " + e);
+            System.out.println("An exception has occurred: " + e);
         }finally{
             if (input!=null){input.close();}
         }
@@ -87,10 +88,21 @@ public class HernandezClaudiaMain {
             int randomIndex = random.nextInt(titles.size());
             return titles.get(randomIndex);
         } else {
-            return "No se encontraron títulos en el archivo.";
+            return "No titles were found in the text file.";
         }
     }
 
+    public String numCharacters(String title) {
+        if (title == null || title.isEmpty()) {
+            return "The title is empty or invalid.";
+        }
 
+        int numCharacters = title.length();
+        if (title.contains(" ")) {
+            return "The movie title has " + numCharacters + " characters (including spaces).";
+        } else {
+            return "The movie title has " + numCharacters + " characters.";
+        }
+    }
 
 }
