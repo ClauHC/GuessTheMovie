@@ -8,6 +8,8 @@ public class HernandezClaudiaMain {
     private static final int MAX_TURNS = 10; // Constante para los intentos iniciales
     private int remainingTurns = MAX_TURNS; // Contador de intentos restantes
     private String revealedTitle; // Título revelado progresivamente
+    private int points = 0;
+    private ArrayList<String> wrongLetters = new ArrayList<>();
 
     public static void main(String[] args) {
         HernandezClaudiaMain programa = new HernandezClaudiaMain();
@@ -21,14 +23,20 @@ public class HernandezClaudiaMain {
 
         String menu;
         int menuOption;
+        boolean showWrongLetters = false;
         do {
             menu =
                 "\n🎯🎯🎯 Guess the Movie 🎯🎯🎯 " +
                 "\n" + numCharacters(randomTitle) +
                 "\nYou are gessing: " + revealedTitle +
                 "\nRemaining turns: " + remainingTurns +
-                "\nPoints: " + "points" +
-                "\nChoose an option:\n [1] Guess a letter \n [2] Guess the movies's title \n [3] Exit";
+                "\nPoints: " + points;
+
+            if (showWrongLetters && !wrongLetters.isEmpty()) {
+                menu += "\nWrong letters: " + String.join(", ", wrongLetters);
+            }
+
+            menu += "\nChoose an option:\n [1] Guess a letter \n [2] Guess the movies's title \n [3] Exit";
 
             menuOption = getIntFromConsole(menu, 1, 3);
             switch (menuOption){
@@ -36,8 +44,7 @@ public class HernandezClaudiaMain {
                     guessingLetter(randomTitle);
                     break;
                 case 2:
-                    System.out.println("guessingTitle");
-                    //guessingTitle();
+                    guessingTitle(randomTitle);
                     break;
                 case 3:
                     System.out.println("You have decided to leave the game. Goodbye!");
@@ -45,7 +52,7 @@ public class HernandezClaudiaMain {
             }
 
             if (remainingTurns == 0) {
-                System.out.println("Game over! \nYou lose!");
+                System.out.println("Game over!");
                 break;
             }
 
@@ -57,21 +64,17 @@ public class HernandezClaudiaMain {
     public int getIntFromConsole(String mensaje, int valueMin, int valueMax){
         Scanner input= new Scanner(System.in);
         int value = 0;
-        int exitNumber = 3;
         boolean validInput = false;
         do{
             System.out.println(mensaje);
             if (input.hasNextInt()){
                 value = input.nextInt();
                 input.nextLine();
-                // Salir del bucle solo si el input es valido, es decir está en rango o es el numero de salida, este bucle es solo control de error, si el input es valido es que no hay error y se sale
-                if (value == exitNumber){
-                    validInput = true;
-                }
-                else if (value>=valueMin && value<=valueMax){
+                // Salir del bucle solo si el input es valido, es decir está en rango, este bucle es solo control de error, si el input es valido es que no hay error y se sale
+                if (value>=valueMin && value<=valueMax){
                     validInput = true;
                 }else{
-                    System.out.println("The number must be between " + valueMin + " and " + exitNumber);
+                    System.out.println("The number must be between " + valueMin + " and " + valueMax);
                 }
             }else{
                 System.out.println("You have to enter a number");
@@ -96,7 +99,9 @@ public class HernandezClaudiaMain {
         } catch (Exception e) {
             System.out.println("Error alert! An exception has occurred: " + e);
         }finally{
-            if (input!=null){input.close();}
+            if (input!=null){
+                input.close();
+            }
         }
 
         if (!titles.isEmpty()) {
@@ -142,7 +147,13 @@ public class HernandezClaudiaMain {
             Devuelve true si el carácter es una letra (mayúscula o minúscula) o un dígito (del 0 al 9).
             Devuelve false si el carácter no es ni una letra ni un dígito (por ejemplo, si es un espacio, un símbolo de puntuación, una marca de acento, etc.).
              */
-            if (Character.isLetterOrDigit(currentChar)) {
+            /*
+            isLetter
+            Valor de retorno:
+            Devuelve true si el carácter es una letra (mayúscula o minúscula).
+            Devuelve false si el carácter no es una letra.
+             */
+            if (Character.isLetter(currentChar)) {
                 result += "*";
             } else {
                 // Sumar a la cadena los espacios y otros caracteres (que no colaron arriba) tal y como están
@@ -154,12 +165,11 @@ public class HernandezClaudiaMain {
 
     public void guessingLetter(String randomTitle) {
         Scanner input = new Scanner(System.in);
-        System.out.print("Enter a single letter or digit: ");
-        String charInput = input.next();
-        charInput = charInput.toLowerCase();
+        System.out.print("Enter a single letter (a-z): ");
+        String charInput = input.next().toLowerCase();
 
-        if (charInput.length() != 1 || !Character.isLetterOrDigit(charInput.charAt(0))) {
-            System.out.println("Error. You must enter a single valid letter or digit.");
+        if (charInput.length() != 1 || !Character.isLetter(charInput.charAt(0))) {
+            System.out.println("Error. You must enter a single valid LETTER.");
             return;
         }
 
@@ -176,12 +186,43 @@ public class HernandezClaudiaMain {
                 }
             }
             revealedTitle = updatedTitle;
+            // Disminuir intentos restantes
+            remainingTurns--;
+            points += 10;
             System.out.println("Correct guess! Updated title: " + revealedTitle);
         } else {
             System.out.println("Attempt failed.");
-            // Disminuir intentos restantes
+            if (!wrongLetters.contains(String.valueOf(guessedChar))) {
+                wrongLetters.add(String.valueOf(guessedChar));
+            }
             remainingTurns--;
+            points -= 10;
         }
     }
 
+    public void guessingTitle(String randomTitle) {
+        Scanner input = new Scanner(System.in);
+        System.out.print("You already have it?! \nWhich movie do you think it is?  ");
+        String titleGuess = input.nextLine().toLowerCase();
+
+        if (titleGuess.equals(randomTitle)) {
+           System.out.println("It's the right movie! \nYou rock in this game! \nYou win!");
+           points += 20;
+           // Si no quedan turnos el juego inmediatamente salta al cierre
+           remainingTurns = 0;
+        } else {
+           System.out.println("Wrong guess!");
+           points -= 20;
+           remainingTurns = 0;
+        }
+    }
+
+    /*todo:
+        reconocer la letra aunque tenga acentos en el titulo
+        letra repetida
+        el exit 3 implica perder el juego
+        Al finalizar el juego, mostraremos al usuario cual era el título de la película y su puntuación definitiva, así como si ha ganado o ha perdido
+        hacer ranking
+        comentarios javadocs en metodos
+    */
 }
