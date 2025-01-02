@@ -91,6 +91,8 @@ public class HernandezClaudiaGame {
                 System.out.println("Game over!");
                 System.out.println("The correct movie title was: " + randomTitle);
                 System.out.println("Your final score: " + points);
+                //Llamar a player al terminar el juego, es decir aquí
+                HernandezClaudiaPlayer player = new HernandezClaudiaPlayer(points);
                 break;
             }
         } while (menuOption != 3);
@@ -252,8 +254,8 @@ public class HernandezClaudiaGame {
 
 
         //Cuerpo principal del metodo
-
         String updatedTitle = "";
+        boolean foundMatch = false;
 
         for (int i = 0; i < randomTitle.length(); i++) {
             char currentChar = randomTitle.charAt(i);
@@ -267,22 +269,30 @@ public class HernandezClaudiaGame {
             char normalizedCharFromGuess = normalizeChar(guessedChar);
 
             if (normalizedCharFromTitle == normalizedCharFromGuess) {
-                updatedTitle += currentChar;
-                System.out.println("Correct guess! Updated title: " + revealedTitle);
-                points += 10;
+                updatedTitle += currentChar; // Mostrar la letra adivinada
+                foundMatch = true;
             } else {
-                updatedTitle += revealedTitle.charAt(i);
-                System.out.println("Attempt failed.");
-                if (!wrongLetters.contains(String.valueOf(guessedChar))) {
-                    wrongLetters.add(String.valueOf(guessedChar));
-                }
-                points -= 10;
+                updatedTitle += revealedTitle.charAt(i); // Mantener el estado actual
             }
-
-            revealedTitle = updatedTitle;
-            remainingTurns--;
-
         }
+
+        // Actualizar el título revelado
+        revealedTitle = updatedTitle;
+
+        if (foundMatch) {
+            System.out.println("Correct guess! Updated title: " + revealedTitle);
+            points += 10;
+        } else {
+            System.out.println("Attempt failed.");
+            if (!wrongLetters.contains(String.valueOf(guessedChar))) {
+                wrongLetters.add(String.valueOf(guessedChar));
+            }
+            points -= 10;
+        }
+
+        // Disminuir intentos restantes
+        remainingTurns--;
+
 
 
         /*
@@ -314,8 +324,8 @@ public class HernandezClaudiaGame {
 
         // Disminuir intentos restantes
         remainingTurns--;
+        */
 
-         */
     }
 
     /**
