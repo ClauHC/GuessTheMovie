@@ -50,7 +50,9 @@ public class HernandezClaudiaGame {
         this.guessedLetters = "";
     }
 
-    // Constructor
+    /**
+     * Constructor de la clase
+     */
     public void start() {
         String menu;
         int menuOption;
@@ -134,11 +136,10 @@ public class HernandezClaudiaGame {
      */
     private String readTitlesFile() {
         File file = new File("titulos.txt");
-        Scanner input = null;
         ArrayList<String> titles = new ArrayList<>();
         Random random = new Random();
 
-        try {
+        /*try {
             input = new Scanner(file);
             while (input.hasNextLine()) {
                 String title = input.nextLine().toLowerCase();
@@ -150,7 +151,20 @@ public class HernandezClaudiaGame {
             if (input != null) {
                 input.close();
             }
+        }*/
+
+
+        try (Scanner input = new Scanner(file)){
+            while (input.hasNextLine()) {
+                String title = input.nextLine().toLowerCase();
+                titles.add(title);
+            }
+        } catch (Exception e) {
+            System.out.println("Error alert! An exception has occurred: " + e);
         }
+        /*
+        Importante cerra al terminar con el input.close() No lo uso porque el try-catch lo gestiona por defecto
+         */
 
         if (!titles.isEmpty()) {
             int randomIndex = random.nextInt(titles.size());
@@ -292,40 +306,6 @@ public class HernandezClaudiaGame {
 
         // Disminuir intentos restantes
         remainingTurns--;
-
-
-
-        /*
-
-        if (randomTitle.contains(String.valueOf(guessedChar))) {
-
-            for (int i = 0; i < randomTitle.length(); i++) {
-
-                // Reemplaza el asterisco por la letra adivinada
-                if (randomTitle.charAt(i) == guessedChar) {
-                    updatedTitle += guessedChar;
-                } else {
-                    // Mantiene el estado actual de revealedTitle
-                    updatedTitle += revealedTitle.charAt(i);
-                }
-            }
-            revealedTitle = updatedTitle;
-
-            System.out.println("Correct guess! Updated title: " + revealedTitle);
-            points += 10;
-
-        } else {
-            System.out.println("Attempt failed.");
-            if (!wrongLetters.contains(String.valueOf(guessedChar))) {
-                wrongLetters.add(String.valueOf(guessedChar));
-            }
-            points -= 10;
-        }
-
-        // Disminuir intentos restantes
-        remainingTurns--;
-        */
-
     }
 
     /**

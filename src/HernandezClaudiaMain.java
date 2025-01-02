@@ -4,7 +4,7 @@ Claudia Hernandez Colomer
 Fp DAW La Salle
 Profesora: Marta Bella
 diciembre 2024 - enero 2025
- */
+*/
 
 public class HernandezClaudiaMain {
 
@@ -20,7 +20,8 @@ public class HernandezClaudiaMain {
     }
 
     /*todo:
-        5 - hacer ranking
-        7 - Clase Player
+        5 - terminar ranking
+        7 - terminar Clase Player
+        input close, trycatch ahorra usarlo, verificar si está bien puesto
     */
 }
