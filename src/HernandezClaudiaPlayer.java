@@ -111,19 +111,44 @@ public class HernandezClaudiaPlayer {
      * Actualiza el ranking con el nuevo jugador.
      */
     private void updateRanking() {
-        // Crear una entrada para el nuevo jugador
-        // String.valueOf(score) convierte el valor de score a string para poder meterlo en el ArrayList de String
+        /*
+        Crear una entrada para el nuevo jugador
+        String.valueOf(score) convierte el valor de score a string para poder meterlo en el ArrayList de String
+         */
         String[] newPalyerDataEntry = {nickname, String.valueOf(score)};
 
-        // meter el nuevo player en el ranking
-        ranking.add(newPalyerDataEntry);
+        // Si el ranking tiene menos de 5 jugadores agrega directamente
+        if (ranking.size() < 5) {
+            ranking.add(newPalyerDataEntry);
+        } else {
+            /*
+            Si ya tiene 5 mira si puede entrar (si es mayor al último, que es el menor, es que es mayor a al menos uno entonces entra)
+            ranking.size() - 1: Resta 1 al tamaño para obtener el índice del último elemento (empiezan en 0)
+            recordar que el get coge cosas. [1] es el score [0] el nick
+             */
+            int lowestScore = Integer.parseInt(ranking.get(ranking.size() - 1)[1]);
+            if (score > lowestScore) {
+                // Agrega temporalmente, hasta el final del emtodo no escribe en el e fichero (y aun falta borrar el ultimo)
+                ranking.add(newPalyerDataEntry);
+            } else {
+                // Si la puntuación no es suficiente mostra mensaje y sale para que no guarde nada
+                System.out.println("You are not worthy ⚒️");
+                return;
+            }
+        }
+
         /*
         Sort ordena comparando, compara a y b, se quiere comprar numeros (los puntos/score) por eso se usa Integer.compare,
         se usa Integer.parseInt para llevar el score que se ha guardado como string a int para poder compararlo
          */
         ranking.sort((a, b) -> Integer.compare(Integer.parseInt(b[1]), Integer.parseInt(a[1])));
 
-        // Guardar el ranking actualizado
+        // Si el ranking tiene más de 5 entradas (arriba agregamos pero no quitamos), eliminar el de menor puntuación, es decir el último
+        if (ranking.size() > 5) {
+            ranking.remove(ranking.size() - 1);
+        }
+
+        // Ahora si guarda (escribe) el ranking actualizado
         createOrSaveRankingToFile();
     }
 
@@ -144,19 +169,12 @@ public class HernandezClaudiaPlayer {
         }
     }
 
-    /*todo:
-        que solo admita 5 lugares en el ranking
-    */
-
-
     /*
     //Para ejecutar y testear la clase y ver si tod va bien sin pasar por tod el juego
     public static void main(String[] args) {
         // Crear una instancia para probar
-        HernandezClaudiaPlayer player = new HernandezClaudiaPlayer(30);
+        HernandezClaudiaPlayer player = new HernandezClaudiaPlayer(10);
     }
-
      */
-
 
 }
