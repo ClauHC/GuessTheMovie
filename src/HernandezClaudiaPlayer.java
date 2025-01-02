@@ -30,7 +30,8 @@ public class HernandezClaudiaPlayer {
         this.score = score;
         this.ranking = new ArrayList<>();
         createOrLoadRankingFile();
-        //updateRanking();
+        updateRanking();
+        displayRanking();
     }
 
     /**
@@ -73,10 +74,12 @@ public class HernandezClaudiaPlayer {
                 System.out.println("Ranking loaded successfully.");
             } catch (Exception e) {
                 System.out.println("Error alert! An exception has occurred: " + e);
+                // Limpiar. Inicializar el ranking como un ArrayList vacío para evitar que si entro algo raro o corrupto no se quede guardado
+                ranking = new ArrayList<>();
             }
         } else {
             System.out.println("No ranking file found. Creating a new one.");
-            createOrSaveRankingToFile();
+            ranking = new ArrayList<>();
         }
     }
 
@@ -103,6 +106,57 @@ public class HernandezClaudiaPlayer {
             System.out.println("Error alert! An exception has occurred: " + e);
         }
     }
+
+    /**
+     * Actualiza el ranking con el nuevo jugador.
+     */
+    private void updateRanking() {
+        // Crear una entrada para el nuevo jugador
+        // String.valueOf(score) convierte el valor de score a string para poder meterlo en el ArrayList de String
+        String[] newPalyerDataEntry = {nickname, String.valueOf(score)};
+
+        // meter el nuevo player en el ranking
+        ranking.add(newPalyerDataEntry);
+        /*
+        Sort ordena comparando, compara a y b, se quiere comprar numeros (los puntos/score) por eso se usa Integer.compare,
+        se usa Integer.parseInt para llevar el score que se ha guardado como string a int para poder compararlo
+         */
+        ranking.sort((a, b) -> Integer.compare(Integer.parseInt(b[1]), Integer.parseInt(a[1])));
+
+        // Guardar el ranking actualizado
+        createOrSaveRankingToFile();
+    }
+
+    /**
+     * Muestra el ranking actual por consola.
+     * Siempre lee los datos más recientes del archivo binario antes de mostrar.
+     */
+    private void displayRanking() {
+        // Mostrar el ranking actualizado
+        System.out.println("\n🏆 Current Ranking 🏆");
+        if (ranking.isEmpty()) {
+            System.out.println("No entries in the ranking.");
+        } else {
+            for (int i = 0; i < ranking.size(); i++) {
+                String[] entry = ranking.get(i);
+                System.out.println((i + 1) + ". " + entry[0] + " - " + entry[1] + " points");
+            }
+        }
+    }
+
+    /*todo:
+        que solo admita 5 lugares en el ranking
+    */
+
+
+    /*
+    //Para ejecutar y testear la clase y ver si tod va bien sin pasar por tod el juego
+    public static void main(String[] args) {
+        // Crear una instancia para probar
+        HernandezClaudiaPlayer player = new HernandezClaudiaPlayer(30);
+    }
+
+     */
 
 
 }

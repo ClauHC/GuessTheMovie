@@ -19,9 +19,4 @@ public class HernandezClaudiaMain {
 
     }
 
-    /*todo:
-        5 - terminar ranking
-        7 - terminar Clase Player
-        input close, trycatch ahorra usarlo, verificar si está bien puesto
-    */
 }
